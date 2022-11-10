@@ -37,11 +37,8 @@ function translate (displayArray) {
         else if (item === '/') {
             return divide;
         }
-        else if (item === '(') {
-            return '('
-        }
-        else if (item === ')') {
-            return ')'
+        else if (['(', ')'].includes(item)) {
+            return item
         }
         else {
             return Number(item);
@@ -122,17 +119,15 @@ function calculate (display) {
 let screen = document.querySelector('.screen');
 let display = '';
 
-let numbers = document.querySelectorAll('.numbers > button');
+let numbers = document.querySelectorAll('.numbers');
 numbers.forEach(button => {
     button.addEventListener('click', element => {
-        if (display.length < 30) {
-            display += element.target.textContent;
-            screen.textContent = display;
-        }
+        display += element.target.textContent;
+        screen.textContent = display;
     });
 });
 
-let operators = document.querySelectorAll('.operators > button');
+let operators = document.querySelectorAll('.operators');
 operators.forEach(button => {
     button.addEventListener('click', element => {
         display += ` ${element.target.textContent} `
@@ -140,20 +135,31 @@ operators.forEach(button => {
     });
 });
 
-let equals = document.querySelector('.equals');
+let equals = document.querySelector('#equals');
 equals.addEventListener('click', () => {
     display = calculate(display);
     screen.textContent = display;
 });
 
-let clear = document.querySelector('.clear');
+let clear = document.querySelector('#clear');
 clear.addEventListener('click', () => {
     display = '';
     screen.textContent = display;
 });
 
-let del = document.querySelector('.del');
+let del = document.querySelector('#del');
 del.addEventListener('click', () => {
     display = display.slice(0, -1);
+    screen.textContent = display;
+});
+
+let sign = document.querySelector('#sign');
+sign.addEventListener('click', () => {
+    if (display.at(-1) === '-') {
+        display = display.slice(0, -1);
+    }
+    else {
+        display += '-';
+    }
     screen.textContent = display;
 });
