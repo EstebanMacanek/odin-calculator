@@ -149,7 +149,7 @@ clear.addEventListener('click', () => {
 
 let del = document.querySelector('#del');
 del.addEventListener('click', () => {
-    display = display.slice(0, -1);
+    display = display.trim().slice(0, -1);
     screen.textContent = display;
 });
 
@@ -162,4 +162,95 @@ sign.addEventListener('click', () => {
         display += '-';
     }
     screen.textContent = display;
+});
+
+function findButtonUsingInnerText (text) {
+    let buttons = document.querySelectorAll('button');
+    for (let i of buttons) {
+        if (i.textContent === text) {
+            return i
+        }
+    }
+}
+
+document.addEventListener('keydown', event => {
+    console.log(event)
+    event.preventDefault()
+    let keyName = event.key;
+    let hasCtrlKey = event.ctrlKey;
+    let relatedButton;
+    if (['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(keyName)) {
+        display += keyName;
+        relatedButton = findButtonUsingInnerText(keyName);
+    }
+    else if (['+', '*', '/', '(', ')'].includes(keyName)) {
+        display += ` ${keyName} `;
+        relatedButton = findButtonUsingInnerText(keyName);
+    }
+    else if (keyName === '-') {
+        if (hasCtrlKey) {
+            if (display.at(-1) === '-') {
+                display = display.slice(0, -1);
+                relatedButton = findButtonUsingInnerText('-/+');
+            }
+            else {
+                display += '-';
+                relatedButton = findButtonUsingInnerText('-/+');
+            }
+        }
+        else {
+            display += ` ${keyName} `;
+            relatedButton = findButtonUsingInnerText(keyName);
+        }
+    }
+    else if (['=', 'Enter'].includes(keyName)) {
+        display = calculate(display);
+        relatedButton = findButtonUsingInnerText('=');
+    }
+    else if (keyName === 'Backspace') {
+        if (hasCtrlKey) {
+            display = '';
+            relatedButton = findButtonUsingInnerText('C');
+        }
+        else {
+            display = display.trim().slice(0, -1);
+            relatedButton = findButtonUsingInnerText('AC');
+        }
+    }
+    screen.textContent = display;
+    if (relatedButton) {
+        relatedButton.classList.toggle('active');
+    }
+});
+
+document.addEventListener('keyup', event => {
+    event.preventDefault()
+    let keyName = event.key;
+    let hasCtrlKey = event.ctrlKey;
+    let relatedButton;
+    if (['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9','+', '*', '/', '(', ')'].includes(keyName)) {
+        relatedButton = findButtonUsingInnerText(keyName);
+    }
+    else if (keyName === '-') {
+        if (hasCtrlKey) {
+            relatedButton = findButtonUsingInnerText('-/+');
+        }
+        else {
+            relatedButton = findButtonUsingInnerText('-');
+        }
+    }
+    else if (['=', 'Enter'].includes(keyName)) {
+        relatedButton = findButtonUsingInnerText('=');
+    }
+    else if (keyName === 'Backspace') {
+        if (hasCtrlKey) {
+            relatedButton = findButtonUsingInnerText('C');
+        }
+        else {
+            relatedButton = findButtonUsingInnerText('AC');
+        }
+    }
+    if (relatedButton) {
+        relatedButton.classList.remove('active');
+    }
 });
